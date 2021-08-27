@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Parse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@200;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" type="text/css" media="all" />
+</head>
+
+<body>
+  <div class="app"></div>
+  <div class="scratch">
+    <div class="staff">
+      <div class="staff-row instruction-row">Instruvtion row</div>
+      <div class="staff-row tab-container">
+        <div class="tuning-column">
+          <div class="tuning" data-string="1">e</div>
+          <div class="tuning" data-string="2">B</div>
+          <div class="tuning" data-string="3">G</div>
+          <div class="tuning" data-string="4">D</div>
+          <div class="tuning" data-string="5">A</div>
+          <div class="tuning" data-string="6">E</div>
+        </div>
+        <div class="bar-column">
+          <div class="bar" data-string="1">|</div>
+          <div class="bar" data-string="2">|</div>
+          <div class="bar" data-string="3">|</div>
+          <div class="bar" data-string="4">|</div>
+          <div class="bar" data-string="5">|</div>
+          <div class="bar" data-string="6">|</div>
+        </div>
+        <div class="measure-column" data-string="1">
+          <div class="measure-row">
+            <div class="pos" contenteditable="true">-</div>
+            <div class="pos" contenteditable="true">-</div>
+            <div class="pos" contenteditable="true">-</div>
+            <div class="pos" contenteditable="true">-</div>
+            <div class="pos" contenteditable="true">-</div>
+            <div class="pos" contenteditable="true">-</div>
+            <div class="pos" contenteditable="true">-</div>
+            <div class="pos" contenteditable="true">-</div>
+            <div class="pos" contenteditable="true">-</div>
+            <div class="pos" contenteditable="true">-</div>
+            <div class="pos" contenteditable="true">-</div>
+            <div class="pos" contenteditable="true">-</div>
+            <div class="pos" contenteditable="true">-</div>
+          </div>
+          <div class="measure-row" contenteditable="true">-------------</div>
+          <div class="measure-row" contenteditable="true">-------------</div>
+          <div class="measure-row" contenteditable="true">-------------</div>
+          <div class="measure-row" contenteditable="true">-------------</div>
+          <div class="measure-row" contenteditable="true">-------------</div>
+        </div>
+        
+      </div>
+    </div>
+    <br>
+    <pre class="output">
+      
+    </pre>
+  </div>
+  <!-- <script type="text/javascript" charset="utf-8">
+    const out =document.querySelector('.output')
+  //const selectAllText = (e) => { window.getSelection().selectAllChildren(e.target) };
+   //  window.getSelection().selectAllChildren(out) };
+  
+  </script> -->
+  
+  <script src="script.js" type="module"></script>
+  <script src="./scratch/notes-raw.js" type="module"></script>
+  <script src="./data/note-tab-map.js" type="module"></script>
+</body>
+
+</html>

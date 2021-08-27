@@ -1,0 +1,41 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  font-family: 'Roboto Mono', monospace;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.row {
+  width: 100%;
+}
+
+.row:hover {
+  background: #807E3E8C;
+}
+
+.tab-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.measure-row {
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   align-items: center;
+   
+}
+
+.pos {
+  padding: 0px 4px;
+  
+}
