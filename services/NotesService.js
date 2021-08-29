@@ -1,4 +1,10 @@
 import ham from ' https://hamilsauce.github.io/hamhelper/hamhelper1.0.0.js';
+const { Observable, pipe, from, of , range, fromPromise, interval, fromEvent, subscribe } = rxjs;
+const { bufferWhen, map, filter, tap, take } = rxjs.operators;
+const { fromFetch } = rxjs.fetch;
+
+
+// result.subscribe(x => console.log(x), e => console.error(e));
 
 export default class {
   constructor(url = './data/note-data.json', fileType = 'json', rootEl = document.querySelector('.app')) {
@@ -7,10 +13,19 @@ export default class {
     this.fileType = fileType;
     this._notes = [];
     this.init(url, fileType);
+    this._res;
   }
 
   async fetchNotes(url, fileType) {
     const fType = fileType.trim().toLowerCase();
+
+    const result$ = fromFetch(fetch(url));
+
+    result$.pipe(
+      map((async (response) => this.res = await response.json()))
+    ).subscribe(json =>  console.log('sub',  json))
+
+    // console.log('result obs', result$)
     const res = await fetch(url);
     let data;
 
@@ -25,9 +40,8 @@ export default class {
   }
 
   toJson() {
-    console.log('tojson',JSON.stringify(this.notes, null, 2) );
-    return JSON.stringify(this.notes, null, 2) 
-    
+    return JSON.stringify(this.notes, null, 2)
+
   }
 
   setLocalStorage() { localStorage.setItem('noteData', JSON.stringify(this.notes, null, 2)) }
@@ -36,4 +50,7 @@ export default class {
 
   get notes() { return this._notes }
   set notes(incomingNotes) { this._notes = incomingNotes }
+
+  get res() { return this._res }
+  set res(incomingRes) { this._res = await incomingRes }
 }

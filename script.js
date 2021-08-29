@@ -4,40 +4,29 @@ import noteJson from './data/note-data.js';
 import TabNote from './components/TabNote.js';
 import NotesService from './services/NotesService.js';
 
-const notesService = new NotesService();
-
 const app = document.querySelector('.app');
 const positions = document.querySelectorAll('.pos');
 const out = document.querySelector('.output')
 
+const notesService = new NotesService();
+
 app.addEventListener('notesloaded', e => {
-  console.log('e', e)
-// out.innerHTML = e.detail.data;
-out.innerHTML = notesService.toJson();
-  
+  out.innerHTML = notesService.toJson();
+
   out.addEventListener('click', e => {
-    console.log('e', e.target);
     selectAllText(e)
     document.execCommand("Copy");
     alert('Copied!')
   });
 })
 
-
 const selectAllText = (e) => { window.getSelection().selectAllChildren(e.target) };
-
 const strings = tab.trim().split('\n');
-
-
-// const output = document.querySelector('.output')
-
-// console.log('strings', strings);
 
 // make row
 strings.forEach(str => {
   const row = document.createElement('div');
   row.classList.add('row');
-  // console.log(str.split('|')[2].split(''));
   row.textContent = str.split('|')[1];
   app.appendChild(row);
 });
@@ -47,8 +36,9 @@ strings.forEach(str => {
     selectAllText(e)
   })
 });
+
 [...positions].forEach(pos => {
-  pos.addEventListener('blur', e => {})
+  pos.addEventListener('blur', e => {console.log('e', e);})
 })
 
 // app.textContent = tab
