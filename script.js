@@ -10,8 +10,8 @@ const out = document.querySelector('.output')
 
 const notesService = new NotesService();
 
-app.addEventListener('notesloaded', e => {
-  out.innerHTML = notesService.toJson();
+app.addEventListener('notesloaded', async e => {
+  out.innerHTML = await notesService.toJson();
 
   out.addEventListener('click', e => {
     selectAllText(e)

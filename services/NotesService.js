@@ -19,11 +19,15 @@ export default class {
   async fetchNotes(url, fileType) {
     const fType = fileType.trim().toLowerCase();
 
-    const result$ = fromFetch(fetch(url));
-
-    result$.pipe(
-      map((async (response) => this.res = await response.json()))
-    ).subscribe(json =>  console.log('sub',  json))
+    // const result$ = fromFetch(fetch(url));
+    // console.log('result$', await result$)
+    // result$.pipe(
+    //   map(async (response) => {
+    //     this.res = response.json()
+    //     console.log('this.res', await this.res)
+    //   }),
+    //   tap(x => console.log('x', x))
+    // ).subscribe(json => console.log('sub', json))
 
     // console.log('result obs', result$)
     const res = await fetch(url);
@@ -52,5 +56,5 @@ export default class {
   set notes(incomingNotes) { this._notes = incomingNotes }
 
   get res() { return this._res }
-  set res(incomingRes) { this._res = await incomingRes }
+  set res(incomingRes) { this._res = incomingRes }
 }
