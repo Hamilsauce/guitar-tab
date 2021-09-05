@@ -28,11 +28,11 @@ const GetNote = (stringNote, fretNum) => {
 
 console.log('getnote b fret 18', GetNote('B', 18))
 
-'E' >>>
-GetNote("E", 1)
-'F' >>> GetNote("A", 7)
-'E' >>> GetNote("G", 6)
-'C#'
+// 'E' >>>
+// GetNote("E", 1)
+// 'F' >>> GetNote("A", 7)
+// 'E' >>> GetNote("G", 6)
+// 'C#'
 
 /*
 NOTES = {"C" : 0, "C#" : 1,  "D": 2, "D#" : 3, "E": 4, "F": 5, 

@@ -4,6 +4,15 @@ import noteJson from './data/note-data.js';
 import TabNote from './components/TabNote.js';
 import NotesService from './services/NotesService.js';
 
+let c1 = 'café'
+let c2 = 'café'
+
+console.log('compare café', c1 === c2);
+
+const str1 = 'café';
+const str2 = 'café';
+console.log('poo', str1 === str2);
+
 const app = document.querySelector('.app');
 const positions = document.querySelectorAll('.pos');
 const out = document.querySelector('.output')
@@ -38,7 +47,7 @@ strings.forEach(str => {
 });
 
 [...positions].forEach(pos => {
-  pos.addEventListener('blur', e => {console.log('e', e);})
+  pos.addEventListener('blur', e => { console.log('e', e); })
 })
 
 // app.textContent = tab

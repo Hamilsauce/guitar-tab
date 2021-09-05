@@ -2,7 +2,7 @@ import ham from ' https://hamilsauce.github.io/hamhelper/hamhelper1.0.0.js';
 const { Observable, pipe, from, of , range, fromPromise, interval, fromEvent, subscribe } = rxjs;
 const { bufferWhen, map, filter, tap, take } = rxjs.operators;
 const { fromFetch } = rxjs.fetch;
-
+console.log('fromPromise', Observable)
 
 // result.subscribe(x => console.log(x), e => console.error(e));
 
@@ -16,7 +16,7 @@ export default class {
     this._res;
   }
 
-  async fetchNotes(url, fileType) {
+   fetchNotes(url, fileType) {
     const fType = fileType.trim().toLowerCase();
 
     // const result$ = fromFetch(fetch(url));
@@ -30,13 +30,20 @@ export default class {
     // ).subscribe(json => console.log('sub', json))
 
     // console.log('result obs', result$)
-    const res = await fetch(url);
+    // const res = await fetch(url);
+    const res = fromFetch(fetch(url));
+    return res
+    
+    
+    
     let data;
-
-    if (fType === 'json') data = await res.json();
+    console.log('data before fromprom', res)
+    // if (fType === 'json') data = await res.json();
+    if (fType === 'json') data = res;
     else if (type === 'csv') { console.log('type csv'); }
+    console.log('data after fromprom', data)
 
-    this.notes = await data.notes;
+    // this.notes = await data.notes;
 
     this.setLocalStorage();
     this.root.dispatchEvent(new CustomEvent('notesloaded', { bubbles: false, detail: { data: this.notes } }))
@@ -50,7 +57,16 @@ export default class {
 
   setLocalStorage() { localStorage.setItem('noteData', JSON.stringify(this.notes, null, 2)) }
 
-  init(url, fileType) { this.fetchNotes(url, fileType) }
+  init(url, fileType) { 
+   const data$ = this.fetchNotes(url, fileType) 
+  let result;
+    console.log('data', data$);
+    data$.pipe(
+      map(x => result = x.json())  ,
+    ).subscribe(x => console.log('x in sub', x))
+
+  console.log('result', result)
+  }
 
   get notes() { return this._notes }
   set notes(incomingNotes) { this._notes = incomingNotes }
