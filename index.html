@@ -9,12 +9,55 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@200;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" type="text/css" media="all" />
+  <link rel="stylesheet" href="note-converter.css" type="text/css" media="all" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/7.3.0/rxjs.umd.min.js" integrity="sha512-y3JTS47nnpKORJX8Jn1Rlm+QgRIIZHtu3hWxal0e81avPrqUH48yk+aCi+gprT0RMAcpYa0WCkapxe+bpBHD6g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
 </head>
+<template>
+  .note-conversion-container {}
+  .note-conversion-header {}
+  .note-conversion-form {}
+  .form-container {}
+  .control-group {}
+  .conversion-select {}
+</template>
 
 <body>
-  <div class="app"></div>
+  <div class="app">
+    <div class="note-conversion-container">
+      <header class="note-conversion-header">
+        <h4 class="header-title">Enter String/tuning and fret number to find the note.</h4>
+        <div class="header-subtitle">
+          Note: Only standard tuning supported right now.
+        </div>
+      </header>
+      <div class="form-container">
+        <form class="note-conversion-form">
+          <div class="control-group">
+            <label for="string-select">Select String</label>
+            <select name="string-select" id="string-select" class="conversion-select">
+              <option value="e">e</option>
+              <option value="B">B</option>
+              <option value="G">G</option>
+              <option value="D">D</option>
+              <option value="A">A</option>
+              <option value="E">E</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label for="fret-input">Select Fret</label>
+            <input type="number" max="24" name="fret-input" id="fret-input" class="conversion-input" />
+          </div>
+          <div class="control-group">
+            <input type="submit" name="conversion-submit" id="conversion-submit" class="conversion-submit" />
+            <div class="conversion-result-container">
+              <div class="conversion-result-label">Result </div>
+              <div class="conversion-result-output"> Em </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
   <div class="scratch">
     <div class="staff">
       <div class="staff-row instruction-row">Instruvtion row</div>
@@ -57,12 +100,11 @@
           <div class="measure-row" contenteditable="true">-------------</div>
           <div class="measure-row" contenteditable="true">-------------</div>
         </div>
-        
       </div>
     </div>
     <br>
     <pre class="output">
-      
+
     </pre>
   </div>
   <!-- <script type="text/javascript" charset="utf-8">
@@ -71,7 +113,6 @@
    //  window.getSelection().selectAllChildren(out) };
   
   </script> -->
-  
   <script src="script.js" type="module"></script>
   <script src="./scratch/notes-raw.js" type="module"></script>
   <script src="./data/note-tab-map.js" type="module"></script>

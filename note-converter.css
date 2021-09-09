@@ -1,0 +1,65 @@
+.note-conversion-container {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: 1fr;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  margin: 10px 0;
+  padding: 10px;
+    width: 100%;
+
+}
+
+.note-conversion-header {
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: 1fr;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+    width: 100%;
+
+}
+.form-container {
+  
+    width: 100%;
+  border: 1px solid #86A7DE;
+  background: #556F9A;
+  color: #fff;
+  padding:5px  5px;
+}
+
+.note-conversion-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* align-items: flex-start; */
+    gap: 5px;
+    width: 100%;
+}
+
+
+.control-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+    width: 100%;
+  padding: 2.5px  5px;
+}
+
+.conversion-select {
+  min-width: 50px;
+  padding: 2.5px  5px;
+  font-size: 1.1em;
+}
+.conversion-input {
+  width: 50px;
+  padding: 2.5px  5px;
+  font-size: 1.1em;
+}

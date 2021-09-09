@@ -2,71 +2,47 @@ import ham from ' https://hamilsauce.github.io/hamhelper/hamhelper1.0.0.js';
 const { Observable, pipe, from, of , range, fromPromise, interval, fromEvent, subscribe } = rxjs;
 const { bufferWhen, map, filter, tap, take } = rxjs.operators;
 const { fromFetch } = rxjs.fetch;
-console.log('fromPromise', Observable)
-
-// result.subscribe(x => console.log(x), e => console.error(e));
 
 export default class {
   constructor(url = './data/note-data.json', fileType = 'json', rootEl = document.querySelector('.app')) {
     this.root = rootEl;
     this.url = url;
+    this.noteDataKey = 'noteData'
     this.fileType = fileType;
     this._notes = [];
-    this.init(url, fileType);
+    this.init(url, fileType, this.noteDataKey, this.root);
     this._res;
   }
 
-   fetchNotes(url, fileType) {
-    const fType = fileType.trim().toLowerCase();
+  async init(url, fileType, key = this.noteDataKey, root) {
+    if (!this.getLocalStorage(key)) this.fetchNotes(url, fileType)
+    else {
+      this.notes = await this.getLocalStorage(key)
+      this.emitNotesLoaded(this.getLocalStorage(key))
+    }
+  }
 
-    // const result$ = fromFetch(fetch(url));
-    // console.log('result$', await result$)
-    // result$.pipe(
-    //   map(async (response) => {
-    //     this.res = response.json()
-    //     console.log('this.res', await this.res)
-    //   }),
-    //   tap(x => console.log('x', x))
-    // ).subscribe(json => console.log('sub', json))
-
-    // console.log('result obs', result$)
-    // const res = await fetch(url);
-    const res = fromFetch(fetch(url));
-    return res
-    
-    
-    
+  async fetchNotes(url, fileType) {
     let data;
-    console.log('data before fromprom', res)
-    // if (fType === 'json') data = await res.json();
-    if (fType === 'json') data = res;
+    const type = fileType.trim().toLowerCase();
+    const res = await fetch(url);
+
+    if (type === 'json') data = await res.json();
     else if (type === 'csv') { console.log('type csv'); }
-    console.log('data after fromprom', data)
 
-    // this.notes = await data.notes;
-
-    this.setLocalStorage();
-    this.root.dispatchEvent(new CustomEvent('notesloaded', { bubbles: false, detail: { data: this.notes } }))
+    this.notes = await data.notes;
+    this.setLocalStorage(this.noteDataKey, this.notes);
+    this.emitNotesLoaded(this.notes)
     return this.notes;
   }
 
-  toJson() {
-    return JSON.stringify(this.notes, null, 2)
+  emitNotesLoaded() { this.root.dispatchEvent(new CustomEvent('notesloaded', { bubbles: false, detail: { data: this.notes } })) }
 
-  }
+  toJson(data) { return JSON.stringify(data, null, 2) }
 
-  setLocalStorage() { localStorage.setItem('noteData', JSON.stringify(this.notes, null, 2)) }
+  setLocalStorage(key, data) { localStorage.setItem(key, this.toJson(data)) }
+  getLocalStorage(key) { return JSON.parse(localStorage.getItem(key)) }
 
-  init(url, fileType) { 
-   const data$ = this.fetchNotes(url, fileType) 
-  let result;
-    console.log('data', data$);
-    data$.pipe(
-      map(x => result = x.json())  ,
-    ).subscribe(x => console.log('x in sub', x))
-
-  console.log('result', result)
-  }
 
   get notes() { return this._notes }
   set notes(incomingNotes) { this._notes = incomingNotes }
