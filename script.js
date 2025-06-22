@@ -14,6 +14,15 @@ conversionForm.addEventListener('submit', async e => {
   e.preventDefault();
 })
 
+const clipper = navigator.clipboard
+
+setTimeout(async() => {
+// await clipper.writeText(app.innerHTML)
+// console.warn('clipper.readText()', await clipper.readText())
+  
+  console.log(' ', );
+}, 1000)
+
 
 const notesService = new NotesService('./data/note-data.json', 'json', app, 'noteData');
 
@@ -22,7 +31,7 @@ app.addEventListener('notesloaded', async e => {
   // console.log('e.detail.data', e.detail.data);
   // out.innerHTML = await notesService.toJson();
   out.innerHTML = notesService.toJson(e.detail.data);
-
+  
   out.addEventListener('click', e => {
     selectAllText(e)
     document.execCommand("Copy");
