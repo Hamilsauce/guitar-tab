@@ -18,7 +18,7 @@ const out = document.querySelector('#output')
 const clipper = navigator.clipboard
 
 setTimeout(async () => {
-  // await clipper.writeText(app.innerHTML)
+  await clipper.writeText(app.innerHTML)
   // console.warn('clipper.readText()', await clipper.readText())
   
   console.log(' ', );
