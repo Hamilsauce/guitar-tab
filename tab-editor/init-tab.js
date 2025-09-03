@@ -1,6 +1,9 @@
 import { playPulse } from '../tab-editor/audio.js';
 import { MusicalScales, NoteData } from '../data/index.js';
+import ham from 'https://hamilsauce.github.io/hamhelper/hamhelper1.0.0.js';
+const { template, utils, DOM } = ham;
 
+console.log(DOM)
 const getNoteByPitchName = (name) => {
   const firstRootIndex = NoteData.findIndex(note => note.pitch === name)
   const note = NoteData.find(n => n.pitch === name)
@@ -72,13 +75,14 @@ let fretData = [];
 
 let beatCount = 0
 
-// Initialize
+
+// Initialize Fret Slots
 for (let beat = 0; beat < NUM_BEATS; beat++) {
   
   if (isBeatOfLength(beat, 'eighth')) {
     beatCount++
-    console.warn('beat', beat)
-    console.warn('beatCount', beatCount)
+    // console.warn('beat', beat)
+    // console.warn('beatCount', beatCount)
   }
   
   for (let string = 0; string < NUM_STRINGS; string++) {
@@ -110,7 +114,7 @@ const createBeatMarker = (x, r = 10) => {
 };
 
 
-const createDataOutput = (data) => {
+const createOutputString = (data) => {
   const groupedByString = data.reduce((acc, curr, i) => {
     if (!acc[curr.string]) {
       acc[curr.string] = []
@@ -132,6 +136,49 @@ const createDataOutput = (data) => {
   return formattedGrid
 };
 
+const createDataOutput = (data) => {
+  const groupedByString = data.reduce((acc, curr, i) => {
+    if (!acc[curr.string]) {
+      acc[curr.string] = []
+    }
+    
+    acc[curr.string].push(curr)
+    
+    return acc
+  }, []);
+  
+  const formattedStrings = groupedByString.map((stringArr, i) => {
+    return stringArr.map((cell, i) => {
+      return `${cell.fret || '-'}`
+    })
+  });
+  
+  const stringEls = formattedStrings.map((charArray, i) => {
+    // console.warn('charArray', charArray)
+    
+    return DOM.createDOM('div', {
+      classList: ['output-string'],
+      children: charArray.map((char, i) => {
+        return DOM.createDOM('div', {
+          classList: ['output-char'],
+          children: [char],
+        })
+      })
+    })
+  });
+  
+  return stringEls
+};
+
+const renderOutputEls = (data) => {
+  const outEl = document.querySelector('#data-output');
+  
+  const stringEls = createDataOutput(data)
+  
+  outEl.innerHTML = ''
+  outEl.append(...stringEls)
+}
+
 const renderDataOutput = (data) => {
   const outEl = document.querySelector('#data-output');
   
@@ -142,7 +189,7 @@ const renderDataOutput = (data) => {
 document.querySelector('#app-header-center').addEventListener('click', e => {
   const fretJSON = JSON.stringify(fretData, null, 2)
   const formattedData = createDataOutput(fretData)
-  console.warn('createDataOutput', formattedData)
+  // console.warn('createDataOutput', formattedData)
   // console.log(fretJSON)
 });
 
@@ -154,6 +201,25 @@ export const renderSVGTab = (selector = '#svg-canvas') => {
   tabGroup.setAttribute("transform", `translate(0, 0) rotate(0) scale(1)`);
   tabGroup.classList.add('tab-group')
   tabGroup.dataset.barNumber = 1;
+  
+  // Initialize Beat markers
+  const markerGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  markerGroup.classList.add('beat-marker-group')
+  
+  for (let beat = 0; beat < NUM_BEATS; beat++) {
+    
+    const x = 20 + beat * CELL_WIDTH;
+    
+    const isQuarter = isQuarterBeat(beat)
+    const isEighth = isEighthBeat(beat)
+    
+    if (isQuarter || isEighth) {
+      const r = isQuarter ? 4 : 2;
+      markerGroup.appendChild(createBeatMarker(x, r))
+    }
+  }
+  
+  tabGroup.appendChild(markerGroup)
   
   // Draw strings
   stringY.forEach((y, stringIndex) => {
@@ -176,13 +242,6 @@ export const renderSVGTab = (selector = '#svg-canvas') => {
     const { stringData, beat } = note
     const x = 20 + note.beat * CELL_WIDTH;
     const y = stringY[note.string] - 10;
-    const isQuarter = isQuarterBeat(note.beat)
-    const isEighth = isEighthBeat(note.beat)
-    
-    if (isQuarter || isEighth) {
-      const r = isQuarter ? 4 : 2;
-      tabGroup.appendChild(createBeatMarker(x, r))
-    }
     
     
     const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -307,7 +366,8 @@ export const renderSVGTab = (selector = '#svg-canvas') => {
       
       fretData[index].fret = input.value;
       
-      renderDataOutput(fretData)
+      // renderDataOutput(fretData)
+      renderOutputEls(fretData)
       
     });
     

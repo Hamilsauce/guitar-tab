@@ -17,12 +17,12 @@ const out = document.querySelector('#output')
 
 const clipper = navigator.clipboard
 
-setTimeout(async () => {
-  await clipper.writeText(app.innerHTML)
-  // console.warn('clipper.readText()', await clipper.readText())
+// setTimeout(async () => {
+//   await clipper.writeText(app.innerHTML)
+//   // console.warn('clipper.readText()', await clipper.readText())
   
-  console.log(' ', );
-}, 1000)
+//   console.log(' ', );
+// }, 1000)
 
 
 const notesService = new NotesService('./data/note-data.json', 'json', app, 'noteData');
