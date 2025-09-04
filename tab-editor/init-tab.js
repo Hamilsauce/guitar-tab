@@ -1,9 +1,9 @@
 import { playPulse } from '../tab-editor/audio.js';
 import { MusicalScales, NoteData } from '../data/index.js';
 import ham from 'https://hamilsauce.github.io/hamhelper/hamhelper1.0.0.js';
+import { EventEmitter } from 'https://hamilsauce.github.io/hamhelper/event-emitter.js'
 const { template, utils, DOM } = ham;
 
-console.log(DOM)
 const getNoteByPitchName = (name) => {
   const firstRootIndex = NoteData.findIndex(note => note.pitch === name)
   const note = NoteData.find(n => n.pitch === name)
@@ -18,6 +18,25 @@ const getNoteByDistanceFrom = (startNote, steps) => {
   return note
 }
 
+class AppState extends EventEmitter {
+  #state = {}
+  constructor(initialState = {}) {
+    super();
+    this.#state = { ...this.#state, ...initialState }
+  }
+  
+  update({ key, data }) {
+    if (key) {
+      this.#state = { ...this.#state, [key]: { ...this.#state[key], ...data } }
+      this.emit(`statechange:${key}`, this.#state)
+    } else {
+      this.#state = { ...this.#state, ...data }
+      this.emit('statechange', this.#state)
+    }
+  }
+}
+
+const appState = new AppState({});
 
 const directionModifierMap = new Map([
   ['left', -1],
@@ -69,7 +88,6 @@ const isBeatOfLength = (beat, durationName = 'quarter') => {
   return !(beat % beatDurationMap.get(durationName))
 }
 
-
 const stringY = [20, 42, 64, 86, 108, 130]; // E A D G B E (low to high)
 let fretData = [];
 
@@ -81,8 +99,6 @@ for (let beat = 0; beat < NUM_BEATS; beat++) {
   
   if (isBeatOfLength(beat, 'eighth')) {
     beatCount++
-    // console.warn('beat', beat)
-    // console.warn('beatCount', beatCount)
   }
   
   for (let string = 0; string < NUM_STRINGS; string++) {
@@ -92,7 +108,7 @@ for (let beat = 0; beat < NUM_BEATS; beat++) {
 
 const selectTextFromTarget = (e) => {
   window.getSelection().selectAllChildren(e.target)
-  document.execCommand("Copy");
+  document.execCommand('Copy');
   alert('Copied!')
 };
 
@@ -104,15 +120,26 @@ const isOnlyDigits = (str) => {
   return /^\d+$/.test(str);
 }
 
-const createBeatMarker = (x, r = 10) => {
-  const marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+const createBeatMarker = (x, r = 10, beat) => {
+  const marker = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
   marker.setAttribute('transform', `translate(${x}, 150) rotate(0) scale(1)`);
   marker.setAttribute('r', r)
   marker.classList.add('beat-marker')
-  // marker.dataset.barNumber = 1;
-  return marker
+  marker.dataset.barNumber = 1;
+  marker.dataset.beat = beat;
+  
+  appState.on('statechange:activeColumn', ({ activeColumn }) => {
+    if (activeColumn.bar === +marker.dataset.barNumber &&
+      activeColumn.beat === +marker.dataset.beat
+    ) {
+      marker.dataset.active = true;
+    } else {
+      marker.dataset.active = false;
+    }
+  });
+  
+  return marker;
 };
-
 
 const createOutputString = (data) => {
   const groupedByString = data.reduce((acc, curr, i) => {
@@ -154,8 +181,6 @@ const createDataOutput = (data) => {
   });
   
   const stringEls = formattedStrings.map((charArray, i) => {
-    // console.warn('charArray', charArray)
-    
     return DOM.createDOM('div', {
       classList: ['output-string'],
       children: charArray.map((char, i) => {
@@ -189,21 +214,19 @@ const renderDataOutput = (data) => {
 document.querySelector('#app-header-center').addEventListener('click', e => {
   const fretJSON = JSON.stringify(fretData, null, 2)
   const formattedData = createDataOutput(fretData)
-  // console.warn('createDataOutput', formattedData)
-  // console.log(fretJSON)
 });
 
 export const renderSVGTab = (selector = '#svg-canvas') => {
   const svg = document.querySelector(selector);
   svg.innerHTML = '';
   
-  const tabGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-  tabGroup.setAttribute("transform", `translate(0, 0) rotate(0) scale(1)`);
+  const tabGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  tabGroup.setAttribute('transform', `translate(0, 0) rotate(0) scale(1)`);
   tabGroup.classList.add('tab-group')
   tabGroup.dataset.barNumber = 1;
   
   // Initialize Beat markers
-  const markerGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  const markerGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   markerGroup.classList.add('beat-marker-group')
   
   for (let beat = 0; beat < NUM_BEATS; beat++) {
@@ -215,7 +238,7 @@ export const renderSVGTab = (selector = '#svg-canvas') => {
     
     if (isQuarter || isEighth) {
       const r = isQuarter ? 4 : 2;
-      markerGroup.appendChild(createBeatMarker(x, r))
+      markerGroup.appendChild(createBeatMarker(x, r, beat))
     }
   }
   
@@ -225,15 +248,15 @@ export const renderSVGTab = (selector = '#svg-canvas') => {
   stringY.forEach((y, stringIndex) => {
     const string = strings[stringIndex]
     
-    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     line.classList.add('string-line')
     line.dataset.stringNumber = string.number
     line.dataset.baseNote = string.baseNote
     
-    line.setAttribute("x1", 0);
-    line.setAttribute("x2", 400);
-    line.setAttribute("y1", y);
-    line.setAttribute("y2", y);
+    line.setAttribute('x1', 0);
+    line.setAttribute('x2', 400);
+    line.setAttribute('y1', y);
+    line.setAttribute('y2', y);
     tabGroup.appendChild(line);
   });
   
@@ -243,10 +266,10 @@ export const renderSVGTab = (selector = '#svg-canvas') => {
     const x = 20 + note.beat * CELL_WIDTH;
     const y = stringY[note.string] - 10;
     
+    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     
-    const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    group.setAttribute("transform", `translate(${x - 10}, ${y}) rotate(0) scale(1)`);
-    group.setAttribute("y", y);
+    group.setAttribute('transform', `translate(${x - 10}, ${y}) rotate(0) scale(1)`);
+    group.setAttribute('y', y);
     group.classList.add('input-group')
     group.dataset.x = x - 10
     group.dataset.y = y
@@ -254,28 +277,30 @@ export const renderSVGTab = (selector = '#svg-canvas') => {
     group.dataset.beat = note.beat
     group.dataset.hasEdited = false;
     
-    const foreign = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
-    // foreign.setAttribute("x", x - 10);
-    // foreign.setAttribute("y", y);
-    foreign.setAttribute("width", 20);
-    foreign.setAttribute("height", 20);
-    foreign.setAttribute("class", "fret-input-container");
+    const foreign = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+    foreign.setAttribute('width', 20);
+    foreign.setAttribute('height', 20);
+    foreign.setAttribute('class', 'fret-input-container');
     
-    const input = document.createElement("input");
-    input.setAttribute("type", "text");
-    input.setAttribute("maxlength", "3");
-    input.setAttribute("max", "24");
-    input.setAttribute("class", "fret-edit");
+    const input = document.createElement('input');
+    input.setAttribute('type', 'text');
+    input.setAttribute('maxlength', '3');
+    input.setAttribute('max', '24');
+    input.setAttribute('class', 'fret-edit');
     input.value = note.fret;
     
     input.addEventListener('click', (e) => {
       e.preventDefault()
-      // input.select()
+      
+      const activeColumn = {
+        bar: +tabGroup.dataset.barNumber,
+        beat: +beat,
+      }
+      
+      appState.update({ key: 'activeColumn', data: activeColumn })
     });
     
     input.addEventListener('focus', (e) => {
-      // e.preventDefault()
-      // input.select()
       const previousEdited = svg.querySelector('[data-has-edited="true"]')
       
       if (previousEdited) {
@@ -290,7 +315,7 @@ export const renderSVGTab = (selector = '#svg-canvas') => {
       
       if (+fretValue) {
         const stringNo = input.closest('.input-group').dataset.stringNumber
-        const stringEl = document.querySelector(`.string-line[data-string-number="${stringNo}"`)
+        const stringEl = document.querySelector(`.string-line[data-string-number='${stringNo}'`)
         const baseNoteName = stringEl.dataset.baseNote
         
         const baseNote = getNoteByPitchName(baseNoteName)
@@ -317,9 +342,9 @@ export const renderSVGTab = (selector = '#svg-canvas') => {
         const beat = +group.dataset.beat
         
         if (dir === 'left' || dir === 'right') {
-          nextInputGroup = svg.querySelector(`.input-group[data-string-number="${stringNumber}"][data-beat="${beat + dirModifier}"]`)
+          nextInputGroup = svg.querySelector(`.input-group[data-string-number='${stringNumber}'][data-beat='${beat + dirModifier}']`)
         } else if (dir === 'up' || dir === 'down') {
-          nextInputGroup = svg.querySelector(`.input-group[data-string-number="${stringNumber + dirModifier}"][data-beat="${beat}"]`)
+          nextInputGroup = svg.querySelector(`.input-group[data-string-number='${stringNumber + dirModifier}'][data-beat='${beat}']`)
         }
         
         if (nextInputGroup) {
@@ -340,8 +365,6 @@ export const renderSVGTab = (selector = '#svg-canvas') => {
       if (inputType.includes('delete')) {
         fretData[index].fret = e.target.value;
         group.dataset.hasEdited = true;
-        
-        // return
       }
       
       else if (!isValid) {
@@ -366,7 +389,6 @@ export const renderSVGTab = (selector = '#svg-canvas') => {
       
       fretData[index].fret = input.value;
       
-      // renderDataOutput(fretData)
       renderOutputEls(fretData)
       
     });

@@ -11,12 +11,12 @@ const copyTextToClipboard = async (text) => {
 };
 
 
-setTimeout(async () => {
-const tabgroup = svg.querySelector('.tab-group');
-  copyTextToClipboard(svg.outerHTML)
-  // const clipper = navigator.clipboard
-  // await clipper.writeText(tabgroup.innerHTML)
-  // console.warn('clipper.readText()', await clipper.readText())
+// setTimeout(async () => {
+// const tabgroup = svg.querySelector('.tab-group');
+//   copyTextToClipboard(svg.outerHTML)
+//   // const clipper = navigator.clipboard
+//   // await clipper.writeText(tabgroup.innerHTML)
+//   // console.warn('clipper.readText()', await clipper.readText())
   
-  console.log(' ', );
-}, 1000)
+//   console.log(' ', );
+// }, 1000)

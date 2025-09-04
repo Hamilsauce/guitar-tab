@@ -217,6 +217,10 @@ input:focus {
   fill: #424346;
   fill: #9598A4;
 }
+.beat-marker[data-active=true] {
+  fill: #424346;
+  fill: #B23232;
+}
 
 #data-output {
   width: 100%;
